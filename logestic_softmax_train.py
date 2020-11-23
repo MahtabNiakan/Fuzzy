@@ -17,7 +17,7 @@ Y=Y.astype(np.int32)
 D=X.shape[1] ##@ get columns number of X matrix
 K=len(set(Y)) ##@ number of diffrent value in Y is equall to number of class
 
-print(Y.shape)
+
 Xtrain=X[:-100]
 Ytrain=Y[:-100]
 Ytrain_ind=y2indicator(Ytrain,K)
@@ -37,7 +37,7 @@ def softmax(a):
 def forward(X,W,b):
     return softmax(X.dot(W)+b)
 
-def predic(p_y_given_x):
+def predict(p_y_given_x):
     return np.argmax(p_y_given_x)
 
 def classification_rate(Y,P):
@@ -52,8 +52,7 @@ learning_rate=0.0001
 for i in range(100000):
     P_ytrain=forward(Xtrain,W,b)
     P_ytest=forward(Xtest,W,b)
-    a=Ytrain_ind.shape
-    n=P_ytrain.shape
+
     Ctrain=cross_entropy(Ytrain_ind,P_ytrain) ## find cost of train
     Ctest=cross_entropy(Ytest_ind,P_ytest)    ##find cost of test data
 
@@ -62,12 +61,13 @@ for i in range(100000):
 
     W=W-learning_rate*Xtrain.T.dot(P_ytrain-Ytrain_ind)
     b=b-learning_rate*(P_ytrain-Ytrain_ind).sum(axis=0)
+
     if i%1000==0:
         print(i,Ctrain,Ctest)
-print('final training model classification rate is',classification_rate(Ytrain,P_ytrain))
-print('final testing model classification rate is',classification_rate(Ytest,P_ytest))
+print('final training model classification rate is',classification_rate(Ytrain,predict(P_ytrain)))
+print('final testing model classification rate is',classification_rate(Ytest,predict(P_ytest)))
 
-legend1,=plt.plot(train_cost)
-legend2,=plt.plot(test_cost)
-plt.legend([legend1,legend2])
+legend1,=plt.plot(train_cost, label='train_c0st')
+legend2,=plt.plot(test_cost, label='test_cost')
+plt.legend()
 plt.show()
